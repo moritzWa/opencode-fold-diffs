@@ -22,6 +22,7 @@ class Box {
 class Text {
   constructor(text) {
     this._text = text
+    this.visible = true
   }
   get plainText() {
     return this._text
@@ -381,8 +382,8 @@ test("bash_output folds the output, the hint and the chrome too", async (t) => {
   await settle()
 
   assert.equal(cmd.maxHeight, 1)
-  assert.equal(wrap.kids[1].maxHeight, 0)
-  assert.equal(wrap.kids[2].maxHeight, 0)
+  assert.equal(wrap.kids[1].visible, false)
+  assert.equal(wrap.kids[2].visible, false)
   assert.equal(wrap.gap, 0)
   assert.equal(block.gap, 0)
   assert.equal(block.paddingTop, 0)
@@ -391,8 +392,8 @@ test("bash_output folds the output, the hint and the chrome too", async (t) => {
 
   cmd.onMouseUp(click())
   assert.equal(cmd.maxHeight, undefined)
-  assert.equal(wrap.kids[1].maxHeight, undefined)
-  assert.equal(wrap.kids[2].maxHeight, undefined)
+  assert.equal(wrap.kids[1].visible, true)
+  assert.equal(wrap.kids[2].visible, true)
   assert.equal(wrap.gap, 1)
   assert.equal(block.gap, 1)
   assert.equal(block.paddingTop, 1)
@@ -406,8 +407,8 @@ test("bash_output leaves an error line outside the wrapper visible", async (t) =
   await plugin.tui(h.api, { bash_output: true })
   await settle()
 
-  assert.equal(wrap.kids[1].maxHeight, 0)
-  assert.equal(error.maxHeight, undefined)
+  assert.equal(wrap.kids[1].visible, false)
+  assert.equal(error.visible, true)
 })
 
 test("bash_min_lines overrides min_lines for commands only", async (t) => {

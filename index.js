@@ -214,6 +214,13 @@ export default {
       state.folded = fold
       state.body.forEach((node, index) => {
         try {
+          // A text renderable at max-height 0 still paints its first row, so
+          // the output and the hint, stacked at the same spot, would bleed into
+          // each other. display: none takes them out of layout and paint both.
+          if (state.hide && index > 0) {
+            node.visible = fold ? false : state.visible[index]
+            return
+          }
           // Yoga honours a 0 max-height, so the body disappears from layout
           // entirely rather than leaving a gap where it used to be.
           node.maxHeight = fold ? (index === 0 ? state.peek : 0) : undefined
@@ -305,9 +312,11 @@ export default {
         block,
         body,
         overflow: body.map((node) => node.overflow),
+        visible: body.map((node) => node.visible),
         title: undefined,
         peek: shellPeek,
         chrome: shellOutput,
+        hide: shellOutput,
         inner: found.box,
         folded: false,
       }
